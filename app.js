@@ -1,5 +1,19 @@
-let url = "http://universities.hipolabs.com/search?country=";
-let btn = document.querySelector("button");
+let url = "https://raw.githubusercontent.com/Hipo/university-domains-list/master/world_universities_and_domains.json";
+
+let btn = document.querySelector("#searchBtn");
+
+let allUniversities = [];
+
+let currentColleges = [];
+
+(async () => {
+    try{
+        let res = await axios.get(url);
+        allUniversities = res.data;
+    }catch(e){
+        console.log(e);
+    }
+})();
 
 btn.addEventListener("click", async () => {
     let status = document.querySelector("#status");
@@ -14,7 +28,6 @@ btn.addEventListener("click", async () => {
     status.innerText = "Searching for universities...";
     let colleges = await getColleges(country);
 
-    // filter by state if provided
     if(state){
         colleges = colleges.filter(c =>
             c["state-province"] &&
@@ -22,9 +35,10 @@ btn.addEventListener("click", async () => {
         );
     }
 
+    currentColleges = colleges;
     show(colleges);
 
-    status.innerText = `Found ${colleges.length} universities`;
+    status.innerHTML = `Found <strong>${colleges.length}</strong> universities`;
     if(colleges.length === 0){
         status.innerText = "No universities found";
     }
@@ -52,7 +66,7 @@ function show(colleges){
 
         if(col["state-province"]){
             location.innerText = col["state-province"] + ", " + col.country;
-        }else{
+        } else {
             location.innerText = col.country;
         }
         li.appendChild(location);
@@ -68,8 +82,15 @@ function show(colleges){
 
 async function getColleges(country){
     try{
-        let res = await axios.get(url + country);
-        return res.data;
+        if(allUniversities.length === 0){
+            let res = await axios.get(url);
+            allUniversities = res.data;
+        }
+
+        return allUniversities.filter(u =>
+            u.country.toLowerCase().includes(country.toLowerCase())
+        );
+
     }catch(e){
         console.log("Error:", e);
         return [];
@@ -79,5 +100,54 @@ async function getColleges(country){
 document.querySelector("#country").addEventListener("keypress", e=>{
     if(e.key === "Enter"){
         btn.click();
+    }
+});
+
+document.querySelector("#themeToggle").onclick = () =>{
+    document.body.classList.toggle("dark");
+};
+
+document.querySelector("#sortBtn").onclick = () => {
+    currentColleges.sort((a,b) =>
+        a.name.localeCompare(b.name)
+    );
+    show(currentColleges);
+};
+
+let countryInput = document.querySelector("#country");
+let suggestionsBox = document.querySelector("#suggestions");
+
+countryInput.addEventListener("input", () => {
+
+    let val = countryInput.value.toLowerCase().trim();
+    suggestionsBox.innerHTML = "";
+
+    if(!val) return;
+
+    let countries = [...new Set(
+        allUniversities.map(u => u.country)
+    )];
+
+    let matches = countries
+        .filter(c => c.toLowerCase().startsWith(val))
+        .slice(0,5);
+
+    matches.forEach(country => {
+        let div = document.createElement("div");
+        div.innerText = country;
+        div.className = "suggestion-item";
+
+        div.onclick = () => {
+            countryInput.value = country;
+            suggestionsBox.innerHTML = "";
+        };
+
+        suggestionsBox.appendChild(div);
+    });
+});
+
+document.addEventListener("click", (e)=>{
+    if(!e.target.closest(".search-box")){
+        suggestionsBox.innerHTML = "";
     }
 });

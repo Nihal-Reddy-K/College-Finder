@@ -1,32 +1,50 @@
+:root{
+    --bg:#eef4ff;
+    --text:#222;
+    --card:#ffffff;
+    --accent:#5f9cff;
+    --border:#e0e6ff;
+}
+
+.dark{
+    --bg:#14161b;
+    --text:#f1f1f1;
+    --card:#1f232b;
+    --accent:#6ea8ff;
+    --border:#2e3440;
+}
+
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body{
     min-height:100vh;
-    background: linear-gradient(135deg,#5f9cff,#6be0ff);
+    background:var(--bg);
+    color:var(--text);
     display:flex;
     justify-content:center;
     align-items:flex-start;
     padding-top:60px;
+    transition:background .3s,color .3s;
 }
 
 .container{
-    background:white;
+    background:var(--card);
     width:90%;
     max-width:750px;
     padding:30px;
     border-radius:14px;
-    box-shadow:0 12px 30px rgba(0,0,0,0.18);
+    box-shadow:0 12px 30px rgba(0,0,0,0.15);
+    transition:background .3s;
 }
 
 h1{
     text-align:center;
     margin-bottom:25px;
-    color:#2c2c2c;
 }
 
 .search-box{
@@ -40,21 +58,22 @@ input{
     padding:13px;
     font-size:16px;
     border-radius:10px;
-    border:1px solid #ccc;
-    transition:0.2s;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
 }
 
 input:focus{
     outline:none;
-    border-color:#5f9cff;
-    box-shadow:0 0 0 3px rgba(95,156,255,0.15);
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(95,156,255,0.2);
 }
 
 button{
     padding:13px 22px;
     border:none;
     border-radius:10px;
-    background:#5f9cff;
+    background:var(--accent);
     color:white;
     font-size:16px;
     cursor:pointer;
@@ -62,7 +81,6 @@ button{
 }
 
 button:hover{
-    background:#3d7df0;
     transform:translateY(-1px);
     box-shadow:0 6px 12px rgba(0,0,0,0.15);
 }
@@ -70,7 +88,7 @@ button:hover{
 #status{
     margin-bottom:15px;
     font-size:15px;
-    color:#555;
+    opacity:0.8;
     text-align:center;
 }
 
@@ -79,31 +97,57 @@ ul{
 }
 
 li{
-    background:#f4f7ff;
+    background:var(--card);
     padding:15px 18px;
     margin-bottom:12px;
     border-radius:10px;
-    border-left:5px solid #5f9cff;
+    border-left:5px solid var(--accent);
     transition:0.2s;
 }
 
 li:hover{
-    background:#eaf1ff;
     transform:translateX(4px);
-}
-
-.search-box input{
-    flex:1;
 }
 
 li a{
     display:inline-block;
     margin-top:6px;
-    color:#3d7df0;
+    color:var(--accent);
     text-decoration:none;
     font-size:14px;
 }
 
 li a:hover{
     text-decoration:underline;
+}
+
+#status strong{
+    color:#3d7df0;
+    font-size:18px;
+}
+
+.search-box{
+    position:relative;
+    width:260px;
+}
+
+#suggestions{
+    position:absolute;
+    background:white;
+    width:100%;
+    border-radius:8px;
+    box-shadow:0 6px 15px rgba(0,0,0,0.15);
+    margin-top:4px;
+    z-index:10;
+    overflow:hidden;
+}
+
+.suggestion-item{
+    padding:10px;
+    cursor:pointer;
+    border-bottom:1px solid #eee;
+}
+
+.suggestion-item:hover{
+    background:#eef3ff;
 }
